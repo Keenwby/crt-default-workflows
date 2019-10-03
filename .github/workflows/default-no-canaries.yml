@@ -1,4 +1,4 @@
-name: no-canaries
+name: default-no-canaries
 
 on: [push]
 
