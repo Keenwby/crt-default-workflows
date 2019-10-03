@@ -6,7 +6,7 @@ jobs:
   deploy_on_ei:
     runs-on: ubuntu-latest
     env:
-      fabrics: (ei-ltx1, ei4)                                     # yaml supports the value as arrays of string
+      fabrics: (ei-ltx1, ei4)                                                    # yaml supports the value as arrays of string
       
     steps:
     - name: EI
