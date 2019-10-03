@@ -43,7 +43,7 @@ jobs:
     needs: deploy_on_corp
     runs-on: ubuntu-latest
     env:
-      fabrics: (prod-lca1, prod-lva1. prod-lsg1, prod-ltx1)   
+      fabrics: (prod-lca1, prod-lva1. prod-lsg1, prod-ltx1)
     steps:
     - name: PROD
       env:
