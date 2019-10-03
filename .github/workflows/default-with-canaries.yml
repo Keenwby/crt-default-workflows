@@ -1,4 +1,4 @@
-name: no-canaries
+name: default-with-canaries
 
 on: [push]
 
@@ -42,7 +42,7 @@ jobs:
       env:
         allowed_tags: (corp.tag)
         success_rate: 0.75
-        run: echo deploying on $fabrics of tag $allowed_tags with success_rate $success_rate.
+      run: echo deploying on $fabrics of tag $allowed_tags with success_rate $success_rate.
 
   canary_and_promotion_on_prod:
     needs: canary_and_promotion_on_corp
@@ -62,4 +62,4 @@ jobs:
     - name: CANARY_PROMOTION_WITH_EKG_CONFIGURATION
       env:
         allowed_tags: (prod.tag)
-        run: echo deploying on $fabrics of tag $allowed_tags.
+      run: echo deploying on $fabrics of tag $allowed_tags.
