@@ -4,7 +4,7 @@ const github = require('@actions/github');
 try {
   const condition = core.getInput('condition');
   const passingStatus = core.getInput('passing_status');
-  console.log(`Heathcheck of condition $condition, passing_status $passing_status`);
+  console.log(`EKG of condition $condition, passing_status $passing_status`);
   const time = (new Date()).toTimeString();
   core.setOutput("time", time);
   core.setOutput("status", "SUCCEEDED");
