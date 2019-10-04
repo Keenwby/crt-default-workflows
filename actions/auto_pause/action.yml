@@ -1,14 +1,12 @@
-name: 'Health Check'
-description: 'fake health check action'
+name: 'Auto Pause'
+description: 'fake auto pause action'
 inputs:
-  condition: 
-    description: 'Condition to be met'
+  duration: 
+    description: 'duration to pause in mins'
     required: true
-    default: 'any'
-  passing_status:
-    description: 'Passing status'
+  reason:
+    description: 'reason for auto pause'
     required: true
-    default: 'DEFAULT'
 outputs:
   time:
     description: 'The time it uses'
@@ -16,4 +14,4 @@ outputs:
     description: 'Status of result'
 runs:
   using: 'node12'
-  main: 'reporting_actions.js'
+  main: 'auto_pause.js'
