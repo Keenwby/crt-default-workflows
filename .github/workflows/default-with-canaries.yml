@@ -16,12 +16,14 @@ jobs:
       env:
         allowed_tags: (ei.canary.tag)      
       run: echo canarying on $fabrics of tag $allowed_tags.
+    - name: auto pause before promotion                          # --> auto pause for duration of 15 mins
+      uses: ./actions/auto_pause/
+      with: 
+        duration: 15
+        reason: Testing 
     - name: CANARY_PROMOTION_WITH_AUTO_PAUSE
-      # schedule:                                                --> auto pause for duration of 15 mins
-      #   - cron:  '*/15 * * * *'
       env:
         allowed_tags: (ei-ltx1.canary.tag, ei-ltx4.canary.tag)
-        auto_pause_reason: auto_pause_15_mins
       run: echo promoting on $fabrics of tag $allowed_tags with $auto_pause_reason.
   
   canary_and_promotion_on_corp:
@@ -53,13 +55,14 @@ jobs:
     env:
       fabrics: (prod-lca1, prod-lva1. prod-lsg1, prod-ltx1)
     steps:
-    - name: CANARY_WITH_EKG_CONFIGURATION
-      env:
-        allowed_tags: (prod.canary.tag)
-        baseline_tag: some_baseline_tag
-        analysis_type: some_analysis_type
+    - name: CANARY_WITH_MANUAL_INTERFERENCE
       run: echo deploying on $fabrics of tag $allowed_tags with baseline_tag $baseline_tag and analysis_type $analysis_type.
-    - name: CANARY_PROMOTION_WITH_EKG_CONFIGURATION
+    - name: manual interference before promotion                          # --> Always required manual interference before promotion
+      if: always()
+      uses: ./actions/manual_interference/
+      with: 
+        reason: Testing 
+    - name: CANARY_PROMOTION_WITH_MANUAL_INTERFERENCE
       env:
         allowed_tags: (prod.tag)
       run: echo deploying on $fabrics of tag $allowed_tags.
