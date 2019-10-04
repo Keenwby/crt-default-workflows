@@ -1,14 +1,21 @@
 name: 'EKG'
 description: 'fake ekg check action'
 inputs:
-  condition: 
-    description: 'Condition to be met'
+  criteria: 
+    description: 'Criteria to succeed'
     required: true
-    default: 'any'
-  passing_status:
-    description: 'Passing status'
-    required: true
+  allowed_tags:
+    description: 'Tags allowed'
+    required: false
     default: 'DEFAULT'
+  baseline_tag:
+    description: 'Baseline tag'
+    required: false
+    default: 'DEFAULT'
+  analysis_type:
+    description: 'Analysis type'
+    required: false
+    default: 'any'
 outputs:
   time:
     description: 'The time it uses'
