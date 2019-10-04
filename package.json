@@ -1,0 +1,24 @@
+{
+  "name": "crt-default-workflows",
+  "version": "1.0.0",
+  "description": "![](https://github.com/Keenwby/crt-default-workflows/workflows/default-no-canaries/badge.svg)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Keenwby/crt-default-workflows.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Keenwby/crt-default-workflows/issues"
+  },
+  "homepage": "https://github.com/Keenwby/crt-default-workflows#readme",
+  "dependencies": {
+    "@actions/core": "^1.1.3",
+    "@actions/github": "^1.1.0"
+  }
+}
