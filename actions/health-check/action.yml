@@ -9,6 +9,12 @@ inputs:
     description: 'Passing status'
     required: true
     default: 'DEFAULT'
+  fabric_names:
+    description: 'fabrics to take this action on'
+    required: true
+  tags:
+    description: 'tags to take this action on'
+    required: true
 outputs:
   time:
     description: 'The time it uses'
@@ -16,4 +22,4 @@ outputs:
     description: 'Status of result'
 runs:
   using: 'node12'
-  main: 'reporting_actions.js'
+  main: 'healthcheck.js'
