@@ -12,6 +12,8 @@ jobs:
       fabrics: (ei-ltx1, ei4)                                     # yaml supports the value as array of strings
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@master
     - name: CANARY
       env:
         allowed_tags: (ei.canary.tag)      
@@ -55,6 +57,8 @@ jobs:
     env:
       fabrics: (prod-lca1, prod-lva1. prod-lsg1, prod-ltx1)
     steps:
+    - name: Checkout
+      uses: actions/checkout@master
     - name: CANARY_WITH_MANUAL_INTERFERENCE
       run: echo deploying on $fabrics of tag $allowed_tags with baseline_tag $baseline_tag and analysis_type $analysis_type.
     - name: manual interference before promotion                          # --> Always required manual interference before promotion
