@@ -2,8 +2,8 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 try {
-  const condition = core.getInput('job_id');
-  console.log(`Trigger another job $job_id`);
+  const jobId = core.getInput('job_id');
+  console.log(`Trigger another job ${jobId}`);
   const time = (new Date()).toTimeString();
   core.setOutput("time", time);
   // Get the JSON webhook payload for the event that triggered the workflow
