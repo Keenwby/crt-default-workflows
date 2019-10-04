@@ -2,6 +2,9 @@ name: default-no-canaries
 
 on: [push]
 
+env:
+  global_env: var                                                            # global env vars e.g. code_version
+
 jobs:
   deploy_on_ei:
     runs-on: ubuntu-latest
