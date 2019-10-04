@@ -9,12 +9,14 @@ jobs:
     env:
       fabrics: (lit-lca1-1)    
     steps:
+    - name: Checkout
+      uses: actions/checkout@master
     - name: LIT_WITH_HEALTH_CHECK
       env:
         allowed_tags: lit-lca1-1.tag 
       run: echo deploying on $fabrics of tag $allowed_tags.
     - name: healthcheck on lit
-      uses: ./actions/health-check/@master
+      uses: ./actions/health-check/
       with:
         condition: all
         passing_status: SUCCEEDED 
@@ -27,18 +29,20 @@ jobs:
       fabrics: (ei-ltx1, ei4)
       
     steps:
+    - name: Checkout
+      uses: actions/checkout@master
     - name: EI_WITH_ROLLBACK_ON_FAILED_REGRESSION
       env:
         allowed_tags: (ei-ltx1.tag, ei-ltx4.tag)      
       run: echo deploying on $fabrics of tag $allowed_tags.
     - name: regression on ei
-      uses: ./actions/regression/@master
+      uses: ./actions/regression/
       with:
         condition: all
         passing_status: SUCCEEDED
     - name: rollback on ei
       if: failure()
-      uses: ./actions/trigger-a-workflow-job/@master
+      uses: ./actions/trigger-a-workflow-job/
       with: 
         job_id: job-used-to-rollback                                              # Needs a definition of 'rollback' here
   
@@ -48,12 +52,14 @@ jobs:
     env:
       fabrics: (corp-lca1, corp-ltx1, corp-lva1)   
     steps:
+    - name: Checkout
+      uses: actions/checkout@master
     - name: CANARY_ON_CORP
       env:
         allowed_tags: (ei.canary.tag)      
       run: echo canarying on $fabrics of tag $allowed_tags.
     - name: ekg on corp
-      uses: ./actions/ekg/@master
+      uses: ./actions/ekg/
       with:
         condition: all
         passing_status: SUCCEEDED
