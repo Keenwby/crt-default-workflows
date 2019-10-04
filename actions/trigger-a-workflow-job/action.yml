@@ -1,19 +1,12 @@
-name: 'Health Check'
-description: 'fake health check action'
+name: 'Workflow Job trigger'
+description: 'Action to trigger another job'
 inputs:
   condition: 
-    description: 'Condition to be met'
+    job_id: 'Id of the job to be triggered'
     required: true
-    default: 'any'
-  passing_status:
-    description: 'Passing status'
-    required: true
-    default: 'DEFAULT'
 outputs:
   time:
     description: 'The time it uses'
-  status: 
-    description: 'Status of result'
 runs:
   using: 'node12'
-  main: 'reporting_actions.js'
+  main: 'job_trigger.js'

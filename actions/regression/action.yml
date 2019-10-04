@@ -1,5 +1,5 @@
-name: 'Health Check'
-description: 'fake health check action'
+name: 'Regression'
+description: 'fake regression action'
 inputs:
   condition: 
     description: 'Condition to be met'
@@ -16,4 +16,4 @@ outputs:
     description: 'Status of result'
 runs:
   using: 'node12'
-  main: 'reporting_actions.js'
+  main: 'regression.js'
