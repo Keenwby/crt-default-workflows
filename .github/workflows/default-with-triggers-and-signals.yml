@@ -69,6 +69,7 @@ jobs:
       run: echo deploying on $fabrics of tag $allowed_tags.
  
   deploy_on_prod:
+    needs: deploy_on_corp
     runs-on: ubuntu-latest
     env:
       fabrics: (prod-lca1, prod-ltx1, prod-lva1, prod-lsg1)
