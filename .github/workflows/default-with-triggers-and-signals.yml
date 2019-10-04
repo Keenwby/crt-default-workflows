@@ -31,7 +31,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@master
-    - name: EI_WITH_ROLLBACK_ON_FAILED_REGRESSION
+    - name: EI_WITH_ROLLBACK_ON_REGRESSION
       env:
         allowed_tags: (ei-ltx1.tag, ei-ltx4.tag)      
       run: echo deploying on $fabrics of tag $allowed_tags.
@@ -67,4 +67,27 @@ jobs:
       env:
         allowed_tags: (corp.tag) 
       run: echo deploying on $fabrics of tag $allowed_tags.
+ 
+  deploy_on_prod:
+    runs-on: ubuntu-latest
+    env:
+      fabrics: (prod-lca1, prod-ltx1, prod-lva1, prod-lsg1)
+      
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: PROD_WITH_ROLLBACK_ON_FAILED_REGRESSION
+      env:
+        allowed_tags: (prod.tag)      
+      run: echo deploying on $fabrics of tag $allowed_tags.
+    - name: regression on prod
+      uses: ./actions/regression/regression         # incorrect path
+      with:
+        condition: all
+        passing_status: SUCCEEDED
+    - name: rollback on prod
+      if: failure()
+      uses: ./actions/trigger-a-workflow-job/
+      with: 
+        job_id: job-used-to-rollback-in-prod
     
