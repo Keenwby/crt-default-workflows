@@ -61,8 +61,10 @@ jobs:
     - name: ekg on corp
       uses: ./actions/ekg/
       with:
-        condition: all
-        passing_status: SUCCEEDED
+        criteria: all
+        allowed_tags: (prod.canary.tag)
+        baseline_tag: some_baseline_tag
+        analysis_type: some_analysis_type
     - name: CANARY_PROMOTION_ON_CORP
       env:
         allowed_tags: (corp.tag) 
