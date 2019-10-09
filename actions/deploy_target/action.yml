@@ -1,0 +1,25 @@
+name: 'DEPLOY_TARGET'
+description: 'This is an action to deploy a target'
+inputs:
+  target_tuple:
+    description: 'The (fabric_name, tag) string tuple of the target'
+    required: true
+  code_version:
+    description: 'The code version to be deployed'
+    required: true
+  config_version:
+    description: 'The config version to be deployed'
+    required: false
+    default: None
+  distribution_percentage:
+    description: 'The percentage of instances per application slice to test(canary). If it is 100%, which is by default, this is a full-deployment. Please see: https://jarvis.corp.linkedin.com/codesearch/result/?path=lid-api%2Flid-api%2Fsrc%2Fmain%2Fpegasus%2Fcom%2Flinkedin%2Fdeployment&reponame=multiproducts%2Flid-api&name=BetaDescription.pdsc for details.'
+    required: false
+    default: 1.0
+outputs:
+  time:
+    description: 'The time it uses'
+  status:
+    description: 'Status of result'
+runs:
+  using: 'node12'
+  main: 'deploy_targets.js'
