@@ -1,56 +1,84 @@
-name: default-no-canaries
+# Workflow diagram:
+#   ei-ltx1   -->|                  corp                        prod
+#                |      -->   shadow ->  deploy     -->  canary  -> promotion
+#   ei4       -->|  
+name: default-no-canaries    # This is the GHA version of lid_deployable default workflow
 
-on: [push]
+on: [push]                   # This workflow is triggered by a success postcommit
 
 env:
-  global_env: var                                                            # global env vars e.g. code_version
+  code_version: code_version                                                # Global arguements taken from either user inputs or the event who triggered this workflow
+  config_version: config_version
 
-jobs:
-  deploy_on_ei:
+jobs:                                                                       
+  deploy_on_ei-ltx1:
     runs-on: ubuntu-latest
-    env:
-      fabrics: (ei-ltx1, ei4)                                                    # yaml supports the value as arrays of string
-      applications: (sample-applications)
       
     steps:
-    - name: EI
-      env:
-        allowed_tags: (ei-ltx1.tag, ei-ltx4.tag)      
-      run: echo deploying on $fabrics of tag $allowed_tags.
+    - name: Checkout                                                        # This is only for passing building GHA. We do not need checkout before taking actions in our w/f.
+      uses: actions/checkout@master                                          
+    - name: deploy_on_ei_ltx1
+      uses: ./actions/deploy_target/                            
+      with: 
+        target_tuple: (ei-ltx1, None)
+        code_version: $(code_version)
+        config_version: $(config_version)
 
-  deploy_on_lit:
+  deploy_on_ei4:
     runs-on: ubuntu-latest
-    env:
-      fabrics: (lit-lca1-1)    
     steps:
-    - name: LIT
-      env:
-        allowed_tags: lit-lca1-1.tag 
-      run: echo deploying on $fabrics of tag $allowed_tags.
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: deploy_on_ei4
+      uses: ./actions/deploy_target/                            
+      with: 
+        target_tuple: (ei4, None)
+        code_version: $(code_version)
+        config_version: $(config_version)
   
   deploy_on_corp:
-    needs: [deploy_on_ei, deploy_on_lit]
+    needs: [deploy_on_ei-ltx1, deploy_on_ei4]                                               
     runs-on: ubuntu-latest
-    env:
-      fabrics: (corp-lca1, corp-ltx1, corp-lva1)   
     steps:
-    - name: CORP_SHADOW
-      env:
-        allowed_tags: (corp_shadow.tag) 
-      run: echo deploying on $fabrics of tag $allowed_tags.
-    - name: CORP
-      env:
-        allowed_tags: (corp.tag) 
-      run: echo deploying on $fabrics of tag $allowed_tags.
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: shadow_on_corp
+      uses: ./actions/deploy_target/                            
+      with: 
+        target_tuple: (corp-lca1, corp.shadow)
+        code_version: $(code_version)
+        config_version: $(config_version)
+    - name: deploy_on_corp
+      uses: ./actions/deploy_target/                            
+      with: 
+        target_tuple: (corp-lca1, corp.full)
+        code_version: $(code_version)
+        config_version: $(config_version)
 
   deploy_on_prod:
     needs: deploy_on_corp
     runs-on: ubuntu-latest
-    env:
-      fabrics: (prod-lca1, prod-lva1. prod-lsg1, prod-ltx1)
     steps:
-    - name: PROD
-      env:
-        allowed_tags: (prod.tag) 
-      run: echo deploying on $fabrics of tag $allowed_tags.
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: canary_on_prod-ltx1
+      uses: ./actions/deploy_target/                            
+      with: 
+        target_tuple: (prod-ltx1, prod.canary)
+        code_version: $(code_version)
+        config_version: $(config_version)
+        distribution_percentage: 0.2
+    - name: promotion_on_prod-ltx1
+      uses: ./actions/deploy_target/                            
+      with: 
+        target_tuple: (prod-ltx1, prod.full)
+        code_version: $(code_version)
+        config_version: $(config_version)
+        distribution_percentage: 1.0
+    - name: promotion_on_prods
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuple: ((prod-lva1, prod.full), (prod-lor1, prod.full), (prod-lsg1, prod.full))        # This should be an array of tuple, GHA does not support array here though.
+        code_version: $(code_version)
+        config_version: $(config_version)
     
