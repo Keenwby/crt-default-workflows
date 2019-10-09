@@ -7,7 +7,7 @@ try {
   const config_version = core.getInput('config_version');
   const distribution_percentage = core.getInput('distribution_percentage');
 
-  console.log(`Deploying code_version: ${code_version}, config_version: ${config_version} on target: ${target_tuples} with distribution_percentage ${distribution_percentage}`);
+  console.log(`Deploying code_version: ${code_version}, config_version: ${config_version} on targets: ${target_tuples} with distribution_percentage ${distribution_percentage}`);
   const time = (new Date()).toTimeString();
   core.setOutput("time", time);
   core.setOutput("status", "SUCCEEDED");
