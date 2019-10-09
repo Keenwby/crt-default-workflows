@@ -2,9 +2,9 @@
 #   ei-ltx1   -->|                  corp                        prod
 #                |      -->   shadow ->  deploy     -->  canary  -> promotion
 #   ei4       -->|  
-name: default-no-canaries    # This is the GHA version of lid_deployable default workflow
+name: default-lid-deployabale    # This is the GHA version of lid_deployable default workflow
 
-on: [push]                   # This workflow is triggered by a success postcommit
+on: [push]                      # This workflow is triggered by a success postcommit
 
 env:
   code_version: code_version                                                # Global arguements taken from either user inputs or the event who triggered this workflow
