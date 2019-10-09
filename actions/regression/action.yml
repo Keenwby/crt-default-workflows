@@ -9,6 +9,9 @@ inputs:
     description: 'Passing status'
     required: true
     default: 'DEFAULT'
+  target_tuples:
+    description: 'The (fabric_name, tag) string tuples of the targets'
+    required: true
 outputs:
   time:
     description: 'The time it uses'
