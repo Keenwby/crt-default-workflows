@@ -78,7 +78,7 @@ jobs:
     - name: promotion_on_prods
       uses: ./actions/deploy_targets/                            
       with: 
-        target_tuple: ((prod-lva1, prod.full), (prod-lor1, prod.full), (prod-lsg1, prod.full))        # This should be an array of tuple, GHA does not support array here though.
+        target_tuples: ((prod-lva1, prod.full), (prod-lor1, prod.full), (prod-lsg1, prod.full))        # This should be an array of tuple, GHA does not support array here though.
         code_version: $(code_version)
         config_version: $(config_version)
     
