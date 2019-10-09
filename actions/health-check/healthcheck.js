@@ -4,16 +4,15 @@ const github = require('@actions/github');
 try {
   const condition = core.getInput('condition');
   const passingStatus = core.getInput('passing_status'); 
-  const fabricNames = core.getInput('fabric_names');
-  const tags = core.getInput('tags');
-  console.log(`Heathcheck on fabrics ${fabricNames}, tags ${tags}`);
+  const target_tuples = core.getInput('target_tuples');
+  console.log(`Heathcheck on targets ${target_tuples}`);
   console.log(`Heathcheck of condition ${condition}, passing_status ${passingStatus}`);
   const time = (new Date()).toTimeString();
   core.setOutput("time", time);
   core.setOutput("status", "SUCCEEDED");
   // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
+//   const payload = JSON.stringify(github.context.payload, undefined, 2)
+//   console.log(`The event payload: ${payload}`);
 } catch (error) {
   core.setFailed(error.message);
 }
