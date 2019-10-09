@@ -22,4 +22,4 @@ outputs:
     description: 'Status of result'
 runs:
   using: 'node12'
-  main: 'deploy_targets.js'
+  main: 'deploy_target.js'
