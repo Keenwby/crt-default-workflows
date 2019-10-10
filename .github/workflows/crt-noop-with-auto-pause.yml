@@ -1,11 +1,16 @@
+# Workflow diagram:
+#            ei                                  corp                                                           prod
+#  deploy  |ei-ltx1, tag_one |    ->->  canary |->-> ekg ->-> promotion                             -->   manual_check -> deploy
+#          |ei4,     tag_two |                 |->-> auto_pause -->promotion_not_start--> canary        
+#                                                                                            
 name: crt-noop-with-auto-pause
 
 on: [push]
 
-env:
-  product: test-product
-  code_version: vCode                                                
-  config_version: vConfig
+env:                                                                        
+  product: test-product                                                     
+  code_version: vCode                                                       
+  config_version: vConfig                                                   
   auto_retry: false
   rollback_code_version_on_corp: vCodeCorp 
   rollback_config_version_on_corp: vCfgCorp
