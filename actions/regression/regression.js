@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 try {
+  const product = core.getInput('product');
   const target_tuples = core.getInput('target_tuples');
   const condition = core.getInput('condition');
   const passingStatus = core.getInput('passing_status');
