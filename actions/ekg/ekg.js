@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 try {
+  const product = core.getInput('product');
   const target_tuples = core.getInput('target_tuples');
   const criteria = core.getInput('criteria');
   console.log(`EKG of criteria ${criteria} on targets %{target_tuples}`);
