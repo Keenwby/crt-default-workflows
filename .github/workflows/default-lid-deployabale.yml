@@ -21,17 +21,17 @@ jobs:
     - name: Checkout                                                        # This is only for passing building GHA. We do not need checkout before taking actions in our w/f.
       uses: actions/checkout@master                                          
     - name: deploy_on_ei_ltx1
-      env:
-        JOB_CONTEXT: ${{ toJson(job) }}
-        STEP_CONTEXT: ${{ toJson(steps) }}
-#       run: echo "$JOB_CONTEXT .   $STEP_CONTEXT"
+#       env:
+#         JOB_CONTEXT: ${{ toJson(job) }}
+#         STEP_CONTEXT: ${{ toJson(steps) }}
+#         run: echo "$JOB_CONTEXT .   $STEP_CONTEXT"
       uses: ./actions/deploy_targets/                            
       with: 
         target_tuples: (ei-ltx1, None)
-        code_version: ${{github.workflow.env.code_version}}
-        config_version: ${{github.workflow.env.config_version}}
-        auto_retry: ${github.workflow.env.auto_retry}
-#         auto_retry_success_rate: ${deploy_on_ei-ltx1.env.auto_retry_success_rate}
+        code_version: $code_version                                            #$ or ${code_version} or ${{code_version}}
+        config_version: $config_version                                        # GHA: ${{github.workflow.env.config_version}}
+        auto_retry: $auto_retry
+        auto_retry_success_rate: $auto_retry_success_rate
 
   deploy_on_ei4:
     runs-on: ubuntu-latest  
@@ -42,9 +42,9 @@ jobs:
       uses: ./actions/deploy_targets/                            
       with: 
         target_tuples: (ei4, None)
-        code_version: $env.code_version
-        config_version: $env.config_version
-        auto_retry: $env.auto_retry
+        code_version: $code_version
+        config_version: $config_version
+        auto_retry: $auto_retry
   
   deploy_on_corp:
     needs: [deploy_on_ei-ltx1, deploy_on_ei4]                                               
@@ -63,9 +63,9 @@ jobs:
         auto_retry: $auto_retry
         auto_retry_success_rate: $auto_retry_success_rate
     - name: deploy_on_corp
-      uses: ./actions/deploy_target/                            
+      uses: ./actions/deploy_targets/                            
       with: 
-        target_tuple: (corp-lca1, corp.full)
+        target_tuples: (corp-lca1, corp.full)
         code_version: $code_version
         config_version: $config_version
         auto_retry: $auto_retry
@@ -78,18 +78,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: canary_on_prod-ltx1
-      uses: ./actions/deploy_target/                            
+      uses: ./actions/deploy_targets/                            
       with: 
-        target_tuple: (prod-ltx1, prod.canary)
+        target_tuples: (prod-ltx1, prod.canary)
         code_version: $code_version
         config_version: $config_version
         distribution_percentage: 0.2
         auto_retry: $auto_retry
         auto_retry_success_rate: 1.0
     - name: promotion_on_prod-ltx1
-      uses: ./actions/deploy_target/                            
+      uses: ./actions/deploy_targets/                            
       with: 
-        target_tuple: (prod-ltx1, prod.full)
+        target_tuples: (prod-ltx1, prod.full)
         code_version: $code_version
         config_version: $config_version
         distribution_percentage: 1.0
