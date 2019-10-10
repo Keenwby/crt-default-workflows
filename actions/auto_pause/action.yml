@@ -2,11 +2,16 @@ name: 'Automatic Pause'
 description: 'fake auto pause'
 inputs:
   duration:
-    description: 'duration to pause in mins'
+    description: 'duration to pause in mins. None means forever until a manual trigger.'
     required: true
+    default: None
   reason:
     description: 'reason for auto pause'
     required: true
+  requires_manual_check:
+    description: 'Whether this requires a manaul check before moving forward. Once set to True, the default duration is overwritten to be None'
+    required: true
+    default: false
 outputs:
   time:
     description: 'The time it uses'
