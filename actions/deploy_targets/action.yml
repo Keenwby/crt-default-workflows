@@ -15,6 +15,13 @@ inputs:
     description: 'The percentage of instances per application slice to test(canary). If it is 100%, which is by default, this is a full-deployment. Please see: https://jarvis.corp.linkedin.com/codesearch/result/?path=lid-api%2Flid-api%2Fsrc%2Fmain%2Fpegasus%2Fcom%2Flinkedin%2Fdeployment&reponame=multiproducts%2Flid-api&name=BetaDescription.pdsc for details.'
     required: false
     default: 1.0
+  auto_retry: 
+    description: 'Whether this deployment should happen with auto-retry strategy.'
+    required: true
+  auto_retry_success_rate:
+    description: 'The success rate threshold if auto-retry is used.'
+    required: false
+    default: 1.0
 outputs:
   time:
     description: 'The time it uses'
