@@ -9,6 +9,7 @@ name: crt-noop-full-automation-path
 on: [push]
 
 env:
+  product: test-product
   code_version: vCode                                                # Global arguements taken from either user inputs or the event who triggered this workflow
   config_version: vConfig
   auto_retry: false
@@ -72,7 +73,8 @@ jobs:
       uses: actions/checkout@master
     - name: private_moratorium                                         # --> private_moratorium for duration of 15 mins
       uses: ./actions/private_moratorium/
-      with: 
+      with:
+        product: ${product}
         target_tuples: ((ei-ltx1, ei-ltx1.full), (ei4, ei4.full))
         duration: 15
         reason: Testing 
