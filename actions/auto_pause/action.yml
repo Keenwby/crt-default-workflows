@@ -1,6 +1,12 @@
-name: 'Auto Pause'
-description: 'fake auto pause action'
+name: 'Private Moratorium'
+description: 'fake auto private moratorium'
 inputs:
+  product:
+    description: 'duration to pause in mins'
+    required: true
+  target_tuples:
+    description: 'The (fabric_name, tag) string tuples of the targets'
+    required: true
   duration: 
     description: 'duration to pause in mins'
     required: true
@@ -14,4 +20,4 @@ outputs:
     description: 'Status of result'
 runs:
   using: 'node12'
-  main: 'auto_pause.js'
+  main: 'private_moratorium.js'
