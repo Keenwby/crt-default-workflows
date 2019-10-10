@@ -21,7 +21,7 @@ jobs:
     - name: Checkout                                                        # This is only for passing building GHA. We do not need checkout before taking actions in our w/f.
       uses: actions/checkout@master                                          
     - name: deploy_on_ei_ltx1
-      run: echo ${{ toJson(workflow) }}  ------ ${{ toJson(job) }}
+      run: echo ${{ toJson(github.workflow) }}  ------ ${{ toJson(job) }}
 #       uses: ./actions/deploy_targets/                            
 #       with: 
 #         target_tuples: (ei-ltx1, None)
