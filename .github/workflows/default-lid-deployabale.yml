@@ -24,13 +24,13 @@ jobs:
       env:
         JOB_CONTEXT: ${{ toJson(job) }}
         STEP_CONTEXT: ${{ toJson(steps) }}
-      run: echo "$JOB_CONTEXT .   $STEP_CONTEXT"
-#       uses: ./actions/deploy_targets/                            
-#       with: 
-#         target_tuples: (ei-ltx1, None)
-#         code_version: ${{github.workflow.env.code_version}}
-#         config_version: ${{ toJson(job) }}
-#         auto_retry: ${auto_retry}
+#       run: echo "$JOB_CONTEXT .   $STEP_CONTEXT"
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuples: (ei-ltx1, None)
+        code_version: ${{github.workflow.env.code_version}}
+        config_version: ${{github.workflow.env.config_version}}
+        auto_retry: ${github.workflow.env.auto_retry}
 #         auto_retry_success_rate: ${deploy_on_ei-ltx1.env.auto_retry_success_rate}
 
   deploy_on_ei4:
@@ -42,9 +42,9 @@ jobs:
       uses: ./actions/deploy_targets/                            
       with: 
         target_tuples: (ei4, None)
-        code_version: ${{env.code_version}}
-        config_version: ${{env.config_version}}
-        auto_retry: ${{env.auto_retry}}
+        code_version: $env.code_version
+        config_version: $env.config_version
+        auto_retry: $env.auto_retry
   
   deploy_on_corp:
     needs: [deploy_on_ei-ltx1, deploy_on_ei4]                                               
