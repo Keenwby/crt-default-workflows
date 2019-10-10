@@ -1,6 +1,9 @@
 name: 'Regression'
 description: 'fake regression action'
 inputs:
+  product:
+    description: 'The product name'
+    required: true
   condition: 
     description: 'Condition to be met'
     required: true
