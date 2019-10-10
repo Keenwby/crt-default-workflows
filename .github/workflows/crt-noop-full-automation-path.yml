@@ -1,3 +1,9 @@
+# Workflow diagram:
+#           lit-lca1-1                                   ei                              corp                                  prod
+#  deploy -> health_check -> regression    ->Y-> auto_pause -> deploy     -->  canary  -> ekg ->Y-> promotion   |-->   canary_one -> ekg_one -> promotion_one
+#                | N                                                                      | N                   |
+#              deploy                                                                  canary                   |-->   canary_two -> ekg_two -> promotion_two
+
 name: crt-noop-full-automation-path
 
 on: [push]
