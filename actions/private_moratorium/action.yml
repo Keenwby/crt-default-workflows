@@ -2,12 +2,12 @@ name: 'Private Moratorium'
 description: 'fake private moratorium'
 inputs:
   product:
-    description: 'duration to pause in mins'
+    description: 'product for this moratorium'
     required: true
   target_tuples:
     description: 'The (fabric_name, tag) string tuples of the targets'
     required: true
-  duration: 
+  duration:
     description: 'duration to pause in mins'
     required: true
   reason:
@@ -16,7 +16,7 @@ inputs:
 outputs:
   time:
     description: 'The time it uses'
-  status: 
+  status:
     description: 'Status of result'
 runs:
   using: 'node12'

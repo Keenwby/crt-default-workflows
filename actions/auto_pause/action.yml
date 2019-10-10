@@ -1,0 +1,17 @@
+name: 'Automatic Pause'
+description: 'fake auto pause'
+inputs:
+  duration:
+    description: 'duration to pause in mins'
+    required: true
+  reason:
+    description: 'reason for auto pause'
+    required: true
+outputs:
+  time:
+    description: 'The time it uses'
+  status:
+    description: 'Status of result'
+runs:
+  using: 'node12'
+  main: 'auto_pause.js'
