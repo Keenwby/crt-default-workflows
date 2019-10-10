@@ -28,7 +28,7 @@ jobs:
         code_version: ${code_version}
         config_version: ${config_version}
         auto_retry: ${auto_retry}
-        auto_retry_success_rate: ${{deploy_on_ei-ltx1.env.auto_retry_success_rate}}
+        auto_retry_success_rate: ${deploy_on_ei-ltx1.env.auto_retry_success_rate}
 
   deploy_on_ei4:
     runs-on: ubuntu-latest  
