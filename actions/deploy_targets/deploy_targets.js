@@ -9,7 +9,7 @@ try {
   const auto_retry = core.getInput('auto_retry');
   const success_rate = core.getInput('auto_retry_success_rate');
 
-  console.log(`Deploying code_version: ${code_version}, config_version: ${config_version} on targets: ${target_tuples} with distribution_percentage ${distribution_percentage} and auto_retry: $(auto_retry) + success_rate: $(success_rate)`);
+  console.log(`Deploying code_version: ${code_version}, config_version: ${config_version} on targets: ${target_tuples} with distribution_percentage ${distribution_percentage} and auto_retry: ${auto_retry} + success_rate: ${success_rate}`);
   const time = (new Date()).toTimeString();
   core.setOutput("time", time);
   core.setOutput("status", "SUCCEEDED");
