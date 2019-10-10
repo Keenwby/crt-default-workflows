@@ -6,7 +6,7 @@ name: default-lid-deployabale    # This is the GHA version of lid_deployable def
 
 on: [push]                      # This workflow is triggered by a success postcommit
 
-env:
+env:                                                                        # We should use 'context' instead of 'env'
   product: test-product
   code_version: code_version                                                # Global arguements taken from either user inputs or the event who triggered this workflow
   config_version: config_version
@@ -16,7 +16,7 @@ jobs:
   deploy_on_ei-ltx1:
     runs-on: ubuntu-latest
     env:
-      auto_retry_success_rate: 0.8                                          
+      auto_retry_success_rate: 0.8                                          # Job-level arguments
        
     steps:
     - name: Checkout                                                        # This is only for passing building GHA. We do not need checkout before taking actions in our w/f.
