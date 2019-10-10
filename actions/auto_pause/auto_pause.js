@@ -4,7 +4,8 @@ const github = require('@actions/github');
 try {
   const duration = core.getInput('duration');
   const reason = core.getInput('reason');
-  console.log(`Auto Pause for duration ${duration}, reason ${reason}`);
+  const requires_manual_check = core.getInput('requires_manual_check');
+  console.log(`Auto Pause for duration ${duration}, reason ${reason} and requires manual check ${requires_manual_check}`);
   const time = (new Date()).toTimeString();
   core.setOutput("time", time);
   core.setOutput("status", "SUCCEEDED");
