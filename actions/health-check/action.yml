@@ -1,6 +1,9 @@
 name: 'Health Check'
 description: 'fake health check action'
 inputs:
+  product:
+    description: 'The product name'
+    required: true
   condition: 
     description: 'Condition to be met'
     required: true
