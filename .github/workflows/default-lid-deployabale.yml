@@ -21,14 +21,14 @@ jobs:
     - name: Checkout                                                        # This is only for passing building GHA. We do not need checkout before taking actions in our w/f.
       uses: actions/checkout@master                                          
     - name: deploy_on_ei_ltx1
-#       run: echo code_version $code_version auto_retry_success_rate $auto_retry_success_rate
-      uses: ./actions/deploy_targets/                            
-      with: 
-        target_tuples: (ei-ltx1, None)
-        code_version: ${{ toJson(workflow) }}
-        config_version: ${{ toJson(job) }}
-        auto_retry: ${auto_retry}
-        auto_retry_success_rate: ${deploy_on_ei-ltx1.env.auto_retry_success_rate}
+      run: echo ${{ toJson(workflow) }}  ------ ${{ toJson(job) }}
+#       uses: ./actions/deploy_targets/                            
+#       with: 
+#         target_tuples: (ei-ltx1, None)
+#         code_version: ${{ toJson(workflow) }}
+#         config_version: ${{ toJson(job) }}
+#         auto_retry: ${auto_retry}
+#         auto_retry_success_rate: ${deploy_on_ei-ltx1.env.auto_retry_success_rate}
 
   deploy_on_ei4:
     runs-on: ubuntu-latest  
