@@ -1,0 +1,198 @@
+name: crt-noop-full-automation-path
+
+on: [push]
+
+env:
+  code_version: vCode                                                # Global arguements taken from either user inputs or the event who triggered this workflow
+  config_version: vConfig
+  auto_retry: false
+  rollback_code_version_on_lit: vCodeLit
+  rollback_code_version_on_corp: vCodeCorp
+  rollback_config_version_on_lit: vCfgLit
+  rollback_config_version_on_corp: vCfgCorp
+
+jobs:
+  deploy_on_lit:
+    runs-on: ubuntu-latest                             
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+  
+    - name: deploy_on_lit_with_health_check
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuples: (lit-lca1-1, lit.full)
+        code_version: $code_version
+        config_version: $config_version
+        distribution_percentage: 1.0
+        auto_retry: $auto_retry
+    
+    - name: health_check_on_lit
+      uses: ./actions/health-check/
+      with:
+        condition: all
+        passing_status: SUCCEEDED 
+        target_tuples: (lit-lca1-1, lit.full)
+    
+    - name: regression_on_lit
+      uses: ./actions/regression/
+      with:
+        condition: all
+        passing_status: SUCCEEDED
+        target_tuples: (lit-lca1-1, lit.full)
+    
+  rollback_on_lit:
+    needs: deploy_on_lit
+    if: failure()
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: rollback_on_lit
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuples: (lit-lca1-1, lit.full)
+        code_version: $rollback_code_version_on_lit
+        config_version: $rollback_config_version_on_lit
+        distribution_percentage: 1.0
+        auto_retry: $auto_retry
+
+  deploy_on_ei_with_auto_pause:
+    needs: deploy_on_lit
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: auto_pause                                         # --> auto pause for duration of 15 mins
+      uses: ./actions/auto_pause/
+      with: 
+        duration: 15
+        reason: Testing 
+
+    - name: deploy_on_ei
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuples: ((ei-ltx1, ei-ltx1.full), (ei4, ei4.full))
+        code_version: $code_version
+        config_version: $config_version
+        distribution_percentage: 1.0
+        auto_retry: $auto_retry
+  
+  deploy_on_corp_with_ekg:
+    needs: deploy_on_ei_with_auto_pause
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: canary_on_corp
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
+        code_version: $code_version
+        config_version: $config_version
+        distribution_percentage: 0.2
+        auto_retry: $auto_retry
+
+    - name: ekg_on_corp
+      uses: ./actions/ekg/
+      with:
+        criteria: all
+        baseline_tag: some_baseline_tag
+        analysis_type: some_analysis_type
+        target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
+    
+    - name: rollback_canary_on_corp
+      if: failure()
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
+        code_version: $rollback_code_version_on_corp
+        config_version: $rollback_config_version_on_corp
+        distribution_percentage: 0.2
+        auto_retry: $auto_retry
+    
+    - name: promote_on_corp
+      if: success()
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuples: ((corp-lca1, corp-lca1.promote), (corp-lva1, corp-lva1.promote))
+        code_version: $code_version
+        config_version: $config_version
+        distribution_percentage: 1.0
+        auto_retry: $auto_retry
+
+  canary_one_on_prod:
+    needs: deploy_on_corp_with_ekg
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: canary_one_on_prod
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuples: ((prod-lva1, prod-lva1.canary), (prod-lsg1, prod-lsg1.canary))
+        code_version: $code_version
+        config_version: $config_version
+        distribution_percentage: 0.2
+        auto_retry: $auto_retry
+
+    - name: ekg_one_on_prod
+      uses: ./actions/ekg/
+      with:
+        criteria: all
+        baseline_tag: some_baseline_tag
+        analysis_type: some_analysis_type
+        target_tuples: ((prod-lva1, prod-lva1.canary), (prod-lsg1, prod-lsg1.canary))
+    
+  canary_two_on_prod:
+    needs: deploy_on_corp_with_ekg
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: canary_two_on_prod
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuples: (prod-lsg1, prod-lva1.canary)
+        code_version: $code_version
+        config_version: $config_version
+        distribution_percentage: 0.2
+        auto_retry: $auto_retry
+
+    - name: ekg_two_on_prod
+      uses: ./actions/ekg/
+      with:
+        criteria: all
+        baseline_tag: some_baseline_tag
+        analysis_type: some_analysis_type
+        target_tuples: (prod-lsg1, prod-lva1.canary)
+  
+  promote_one_on_prod:
+    needs: canary_one_on_prod
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: promote_one_on_prod
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuples: ((prod-lva1, prod-lva1.canary), (prod-lsg1, prod-lsg1.canary))
+        code_version: $code_version
+        config_version: $config_version
+        auto_retry: $auto_retry
+  
+  promote_two_on_prod:
+    needs: canary_two_on_prod
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: promote_two_on_prod
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuples: (prod-lsg1, prod-lva1.canary)
+        code_version: $code_version
+        config_version: $config_version
+        auto_retry: $auto_retry
