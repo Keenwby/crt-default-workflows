@@ -21,11 +21,13 @@ jobs:
     - name: Checkout                                                        # This is only for passing building GHA. We do not need checkout before taking actions in our w/f.
       uses: actions/checkout@master                                          
     - name: deploy_on_ei_ltx1
-      run: echo ${{ toJson(github.workflow) }}
+      env:
+        JOB_CONTEXT: ${{ toJson(job) }}
+      run: echo "$JOB_CONTEXT"
 #       uses: ./actions/deploy_targets/                            
 #       with: 
 #         target_tuples: (ei-ltx1, None)
-#         code_version: ${{ toJson(workflow) }}
+#         code_version: ${{github.workflow.env.code_version}}
 #         config_version: ${{ toJson(job) }}
 #         auto_retry: ${auto_retry}
 #         auto_retry_success_rate: ${deploy_on_ei-ltx1.env.auto_retry_success_rate}
@@ -36,13 +38,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: deploy_on_ei4
-      run: echo ${{ toJson(job) }}
-#       uses: ./actions/deploy_targets/                            
-#       with: 
-#         target_tuples: (ei4, None)
-#         code_version: ${{env.code_version}}
-#         config_version: ${{env.config_version}}
-#         auto_retry: ${{env.auto_retry}}
+      uses: ./actions/deploy_targets/                            
+      with: 
+        target_tuples: (ei4, None)
+        code_version: ${{env.code_version}}
+        config_version: ${{env.config_version}}
+        auto_retry: ${{env.auto_retry}}
   
   deploy_on_corp:
     needs: [deploy_on_ei-ltx1, deploy_on_ei4]                                               
