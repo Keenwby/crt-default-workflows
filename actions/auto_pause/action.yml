@@ -1,5 +1,5 @@
 name: 'Private Moratorium'
-description: 'fake auto private moratorium'
+description: 'fake private moratorium'
 inputs:
   product:
     description: 'duration to pause in mins'
