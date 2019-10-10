@@ -28,7 +28,7 @@ jobs:
         code_version: ${code_version}
         config_version: ${config_version}
         auto_retry: ${auto_retry}
-        auto_retry_success_rate: ${auto_retry_success_rate}
+        auto_retry_success_rate: ${{jobs.deploy_on_ei-ltx1.env.auto_retry_success_rate}}
 
   deploy_on_ei4:
     runs-on: ubuntu-latest  
@@ -39,9 +39,9 @@ jobs:
       uses: ./actions/deploy_targets/                            
       with: 
         target_tuples: (ei4, None)
-        code_version: ${{code_version}}
-        config_version: ${{config_version}}
-        auto_retry: ${{auto_retry}}
+        code_version: ${{env.code_version}}
+        config_version: ${{env.config_version}}
+        auto_retry: ${{env.auto_retry}}
   
   deploy_on_corp:
     needs: [deploy_on_ei-ltx1, deploy_on_ei4]                                               
