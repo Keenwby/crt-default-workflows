@@ -8,15 +8,15 @@ name: crt-noop-full-automation-path
 
 on: [push]
 
-env:
-  product: test-product
-  code_version: vCode                                                # Global arguements taken from either user inputs or the event who triggered this workflow
-  config_version: vConfig
-  auto_retry: false
-  rollback_code_version_on_lit: vCodeLit                                 # - code_version:
-  rollback_code_version_on_corp: vCodeCorp                               #   - deploy_to: 1.0
-  rollback_config_version_on_lit: vCfgLit                                #   - prev_on_lit: 0.5
-  rollback_config_version_on_corp: vCfgCorp                              #   - prev_on_corp: 0.6
+env:                                                                    # We can support namespace hierarchy e.g.
+  product: test-product                                                 # - code_version:       
+  code_version: vCode                                                   #   - deploy_to: vCode
+  config_version: vCfg                                                  #   - current_on_corp: vCodeCorp               referencing: $code_version.current_on_corp
+  auto_retry: false                                                     #   - current_on_lit: vCodeLit
+  rollback_code_version_on_lit: vCodeLit                                # - config_version:               
+  rollback_code_version_on_corp: vCodeCorp                              #   - deploy_to: vCfg
+  rollback_config_version_on_lit: vCfgLit                               #   - current_on_corp: vCfgCorp
+  rollback_config_version_on_corp: vCfgCorp                             #   - current_on_lit: vCfgLit
 
 jobs:
   deploy_on_lit:
