@@ -7,10 +7,6 @@ inputs:
   criteria: 
     description: 'Criteria to succeed'
     required: true
-  allowed_tags:
-    description: 'Tags allowed'
-    required: false
-    default: 'DEFAULT'
   baseline_tag:
     description: 'Baseline tag'
     required: false
