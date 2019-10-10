@@ -25,8 +25,8 @@ jobs:
       uses: ./actions/deploy_targets/                            
       with: 
         target_tuples: (ei-ltx1, None)
-        code_version: ${code_version}
-        config_version: ${config_version}
+        code_version: ${{ toJson(workflow) }}
+        config_version: ${{ toJson(job) }}
         auto_retry: ${auto_retry}
         auto_retry_success_rate: ${deploy_on_ei-ltx1.env.auto_retry_success_rate}
 
