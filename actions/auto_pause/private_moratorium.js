@@ -2,9 +2,12 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 try {
+  const product = core.getInput('product');
+  const target_tuples = core.getInput('target_tuples');
   const duration = core.getInput('duration');
   const reason = core.getInput('reason');
-  console.log(`Heathcheck of duration ${duration}, reason ${reason}`);
+  console.log(`Private Moratorium of product ${product}, targets ${target_tuples},`);
+  console.log(`for duration ${duration}, reason ${reason}`);
   const time = (new Date()).toTimeString();
   core.setOutput("time", time);
   core.setOutput("status", "SUCCEEDED");
