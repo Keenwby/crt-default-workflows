@@ -21,13 +21,14 @@ jobs:
     - name: Checkout                                                        # This is only for passing building GHA. We do not need checkout before taking actions in our w/f.
       uses: actions/checkout@master                                          
     - name: deploy_on_ei_ltx1
-      uses: ./actions/deploy_targets/                            
-      with: 
-        target_tuples: (ei-ltx1, None)
-        code_version: $code_version
-        config_version: $config_version
-        auto_retry: $auto_retry
-        auto_retry_success_rate: $auto_retry_success_rate
+      run: echo code_version $code_version auto_retry_success_rate $auto_retry_success_rate
+#       uses: ./actions/deploy_targets/                            
+#       with: 
+#         target_tuples: (ei-ltx1, None)
+#         code_version: $code_version
+#         config_version: $config_version
+#         auto_retry: $auto_retry
+#         auto_retry_success_rate: $auto_retry_success_rate
 
   deploy_on_ei4:
     runs-on: ubuntu-latest  
