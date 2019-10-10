@@ -1,6 +1,9 @@
 name: 'DEPLOY_TARGETS'
 description: 'This is an action to deploy targets in parallel'
 inputs:
+  product:
+    description: 'The product name to deploy'
+    required: true    
   target_tuples:
     description: 'The (fabric_name, tag) string tuples of the targets'
     required: true
