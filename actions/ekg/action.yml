@@ -1,6 +1,9 @@
 name: 'EKG'
 description: 'fake ekg check action'
 inputs:
+  product:
+    description: 'The product name'
+    required: true    
   target_tuples:
     description: 'The (fabric_name, tag) string tuples of the targets'
     required: true
