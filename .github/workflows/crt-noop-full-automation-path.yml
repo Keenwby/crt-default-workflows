@@ -12,10 +12,10 @@ env:
   code_version: vCode                                                # Global arguements taken from either user inputs or the event who triggered this workflow
   config_version: vConfig
   auto_retry: false
-  rollback_code_version_on_lit: vCodeLit
-  rollback_code_version_on_corp: vCodeCorp
-  rollback_config_version_on_lit: vCfgLit
-  rollback_config_version_on_corp: vCfgCorp
+  rollback_code_version_on_lit: vCodeLit                                 # - code_version:
+  rollback_code_version_on_corp: vCodeCorp                               #   - deploy_to: 1.0
+  rollback_config_version_on_lit: vCfgLit                                #   - prev_on_lit: 0.5
+  rollback_config_version_on_corp: vCfgCorp                              #   - prev_on_corp: 0.6
 
 jobs:
   deploy_on_lit:
@@ -63,16 +63,17 @@ jobs:
         distribution_percentage: 1.0
         auto_retry: $auto_retry
 
-  deploy_on_ei_with_auto_pause:
+  deploy_on_ei_with_private_moratorium:
     needs: deploy_on_lit
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout
       uses: actions/checkout@master
-    - name: auto_pause                                         # --> auto pause for duration of 15 mins
-      uses: ./actions/auto_pause/
+    - name: private_moratorium                                         # --> private_moratorium for duration of 15 mins
+      uses: ./actions/private_moratorium/
       with: 
+        target_tuples: ((ei-ltx1, ei-ltx1.full), (ei4, ei4.full))
         duration: 15
         reason: Testing 
 
@@ -86,7 +87,7 @@ jobs:
         auto_retry: $auto_retry
   
   deploy_on_corp_with_ekg:
-    needs: deploy_on_ei_with_auto_pause
+    needs: deploy_on_ei_with_private_moratorium
     runs-on: ubuntu-latest
 
     steps:
