@@ -26,7 +26,7 @@ jobs:
 #         JOB_CONTEXT: ${{ toJson(job) }}
 #         STEP_CONTEXT: ${{ toJson(steps) }}
 #         run: echo "$JOB_CONTEXT .   $STEP_CONTEXT"
-      uses: ./actions/deploy_targets/                            
+      uses: ./actions/deploy_lid_targets/                            
       with: 
         product: $product
         target_tuples: (ei-ltx1, None)
@@ -41,7 +41,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: deploy_on_ei4
-      uses: ./actions/deploy_targets/                            
+      uses: ./actions/deploy_lid_targets/                            
       with: 
         product: $product
         target_tuples: (ei4, None)
@@ -58,7 +58,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: shadow_on_corp
-      uses: ./actions/deploy_targets/                            
+      uses: ./actions/deploy_lid_targets/                            
       with: 
         product: $product
         target_tuples: (corp-lca1, corp.shadow)
@@ -67,7 +67,7 @@ jobs:
         auto_retry: $auto_retry
         auto_retry_success_rate: $auto_retry_success_rate
     - name: deploy_on_corp
-      uses: ./actions/deploy_targets/                            
+      uses: ./actions/deploy_lid_targets/                            
       with: 
         product: $product
         target_tuples: (corp-lca1, corp.full)
@@ -83,7 +83,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: canary_on_prod-ltx1
-      uses: ./actions/deploy_targets/                            
+      uses: ./actions/deploy_lid_targets/                            
       with: 
         product: $product
         target_tuples: (prod-ltx1, prod.canary)
@@ -93,7 +93,7 @@ jobs:
         auto_retry: $auto_retry
         auto_retry_success_rate: 1.0
     - name: promotion_on_prod-ltx1
-      uses: ./actions/deploy_targets/                            
+      uses: ./actions/deploy_lid_targets/                            
       with: 
         product: $product
         target_tuples: (prod-ltx1, prod.full)
@@ -101,7 +101,7 @@ jobs:
         config_version: $config_version
         distribution_percentage: 1.0
     - name: promotion_on_prods
-      uses: ./actions/deploy_targets/                            
+      uses: ./actions/deploy_lid_targets/                            
       with: 
         product: $product
         target_tuples: ((prod-lva1, prod.full), (prod-lor1, prod.full), (prod-lsg1, prod.full))        # This should be an array of tuple, GHA does not support array here though.
