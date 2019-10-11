@@ -16,11 +16,11 @@ env:
 
 jobs:                                                                       
   deploy_on_holdem:
-    runs-on: ubuntu-latest
-  env:
+   runs-on: ubuntu-latest
+   env:
     cluster_name: holdem
        
-    steps:
+   steps:
     - name: Checkout                                                        # This is only for passing building GHA. We do not need checkout before taking actions in our w/f.
       uses: actions/checkout@master                                          
     - name: deploy_on_holdem
