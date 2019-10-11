@@ -1,9 +1,13 @@
 # crt-default-workflows
 
-![](https://github.com/Keenwby/crt-default-workflows/workflows/default-no-canaries/badge.svg)    ----> should succeed
+![](https://github.com/Keenwby/crt-default-workflows/workflows/crt-noop-full-automation-path/badge.svg) succeed
 
 
-![](https://github.com/Keenwby/crt-default-workflows/workflows/default-with-canaries/badge.svg)    ----> should fail
+![](https://github.com/Keenwby/crt-default-workflows/workflows/crt-noop-with-auto-pause/badge.svg)   
 
 
-![](https://github.com/Keenwby/crt-default-workflows/workflows/default-with-triggers-and-signals/badge.svg)    ----> should fail
+![](https://github.com/Keenwby/crt-default-workflows/workflows/default-hadoop/badge.svg)   
+
+
+
+![](https://github.com/Keenwby/crt-default-workflows/workflows/default-lid-deployabale/badge.svg)   
