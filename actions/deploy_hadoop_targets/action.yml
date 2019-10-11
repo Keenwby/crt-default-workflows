@@ -1,0 +1,20 @@
+name: 'DEPLOY_TARGETS'
+description: 'This is an action to deploy targets in parallel'
+inputs:
+  product:
+    description: 'The product name to deploy'
+    required: true
+  cluster:
+    description: 'The cluster to deploy'
+    required: true
+  code_version:
+    description: 'The code version to be deployed'
+    required: true
+outputs:
+  time:
+    description: 'The time it uses'
+  status:
+    description: 'Status of result'
+runs:
+  using: 'node12'
+  main: 'deploy_hadoop_targets.js'
