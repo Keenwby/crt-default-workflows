@@ -1,4 +1,4 @@
-name: 'DEPLOY_TARGETS'
+name: 'DEPLOY_LID_TARGETS'
 description: 'This is an action to deploy targets in parallel'
 inputs:
   product:

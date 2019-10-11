@@ -1,5 +1,5 @@
-name: 'DEPLOY_TARGETS'
-description: 'This is an action to deploy targets in parallel'
+name: 'DEPLOY_HADOOP'
+description: 'This is an action to deploy hadoop'
 inputs:
   product:
     description: 'The product name to deploy'
