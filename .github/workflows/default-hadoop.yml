@@ -5,7 +5,7 @@
 #   mlearn-alpha  -->|
 #   uno           -->|
 
-name: default-lid-deployabale    # This is the GHA version of hadoop default workflow
+name: default-hadoop    # This is the GHA version of hadoop default workflow
 
 on: [push]                      # This workflow is triggered by a success postcommit
 
