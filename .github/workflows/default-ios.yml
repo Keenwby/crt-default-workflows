@@ -1,0 +1,55 @@
+# Workflow diagram:
+#   app_upload        -->    app_submit   --> app_release
+
+name: default-ios    # This is the GHA version of ios default workflow
+
+on: [push]                      # This workflow is triggered by a success postcommit
+
+env:
+  product: test-product
+  code_version: code-version
+
+jobs:
+  appstore_upload:
+   runs-on: ubuntu-latest
+
+   steps:
+    - name: Checkout                                                        # This is only for passing building GHA. We do not need checkout before taking actions in our w/f.
+      uses: actions/checkout@master
+    - name: appstore_upload
+      uses: ./actions/deploy_ios/
+      with:
+        product: $product
+        cluster: app_upload
+        code_version: $code_version
+        distribution_percentage: 1.0
+
+  appstore_submit:
+    runs-on: ubuntu-latest
+    needs: [appstore_upload]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: appstore_submit
+        uses: ./actions/deploy_ios/
+        with:
+          product: $product
+          cluster: appstore_submit
+          code_version: $code_version
+          distribution_percentage: 1.0
+
+  appstore_release:
+    runs-on: ubuntu-latest
+    needs: [appstore_upload]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: appstore_release
+        uses: ./actions/deploy_ios/
+        with:
+          product: $product
+          cluster: appstore_release
+          code_version: $code_version
+          distribution_percentage: 1.0
