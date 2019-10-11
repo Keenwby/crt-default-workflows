@@ -32,4 +32,4 @@ outputs:
     description: 'Status of result'
 runs:
   using: 'node12'
-  main: 'deploy_hadoop_targets.js'
+  main: 'deploy_lid_targets.js'
