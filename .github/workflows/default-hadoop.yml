@@ -1,0 +1,108 @@
+# Workflow diagram:
+#   holdem        -->| 
+#   holdem5       -->|      
+#   faro          -->|   -->   war
+#   mlearn-alpha  -->|
+#   uno           -->|
+
+name: default-lid-deployabale    # This is the GHA version of hadoop default workflow
+
+on: [push]                      # This workflow is triggered by a success postcommit
+
+env:                                                                        
+  product: test-product
+  code_version: code-version                                                
+  application_tag: test-application-tag
+
+jobs:                                                                       
+  deploy_on_holdem:
+    runs-on: ubuntu-latest
+  env:
+    cluster_name: holdem
+       
+    steps:
+    - name: Checkout                                                        # This is only for passing building GHA. We do not need checkout before taking actions in our w/f.
+      uses: actions/checkout@master                                          
+    - name: deploy_on_holdem
+      uses: ./actions/deploy_hadoop_targets/                            
+      with: 
+        product: $product
+        cluster: $application_tag.$cluster_name
+        code_version: $code_version  
+
+  deploy_on_holdem5:
+    runs-on: ubuntu-latest
+    env:
+      cluster_name: holdem5
+      
+    steps:
+    - name: Checkout                                                        
+      uses: actions/checkout@master                                          
+    - name: deploy_on_holdem5
+      uses: ./actions/deploy_hadoop_targets/                            
+      with: 
+        product: $product
+        cluster: $application_tag.$cluster_name
+        code_version: $code_version  
+
+  deploy_on_faro:
+    runs-on: ubuntu-latest
+    env:
+      cluster_name: faro
+      
+    steps:
+    - name: Checkout                                                        
+      uses: actions/checkout@master                                          
+    - name: deploy_on_faro
+      uses: ./actions/deploy_hadoop_targets/                            
+      with: 
+        product: $product
+        cluster: $application_tag.$cluster_name
+        code_version: $code_version  
+   
+  deploy_on_mlearn-alpha:
+    runs-on: ubuntu-latest
+    env:
+      cluster_name: mlearn-alpha
+      
+    steps:
+    - name: Checkout                                                        
+      uses: actions/checkout@master                                          
+    - name: deploy_on_mlearn-alpha
+      uses: ./actions/deploy_hadoop_targets/                            
+      with: 
+        product: $product
+        cluster: $application_tag.$cluster_name
+        code_version: $code_version  
+        
+        
+  deploy_on_uno:
+    runs-on: ubuntu-latest
+    env:
+      cluster_name: uno
+      
+    steps:
+    - name: Checkout                                                        
+      uses: actions/checkout@master                                          
+    - name: deploy_on_uno
+      uses: ./actions/deploy_hadoop_targets/                            
+      with: 
+        product: $product
+        cluster: $application_tag.$cluster_name
+        code_version: $code_version 
+        
+  deploy_on_war:
+    needs: [deploy_on_holdem, deploy_on_holdem5, deploy_on_faro, deploy_on_mlearn-alpha, deploy_on_uno]
+    runs-on: ubuntu-latest
+    env:
+      cluster_name: war
+      
+    steps:
+    - name: Checkout                                                        
+      uses: actions/checkout@master                                          
+    - name: deploy_on_war
+      uses: ./actions/deploy_hadoop_targets/                            
+      with: 
+        product: $product
+        cluster: $application_tag.$cluster_name
+        code_version: $code_version 
