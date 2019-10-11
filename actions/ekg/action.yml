@@ -3,11 +3,11 @@ description: 'fake ekg check action'
 inputs:
   product:
     description: 'The product name'
-    required: true    
+    required: true
   target_tuples:
     description: 'The (fabric_name, tag) string tuples of the targets'
     required: true
-  criteria: 
+  criteria:
     description: 'Criteria to succeed'
     required: true
   baseline_tag:
@@ -16,12 +16,12 @@ inputs:
     default: 'DEFAULT'
   analysis_type:
     description: 'Analysis type'
-    required: false
+    required: true
     default: 'any'
 outputs:
   time:
     description: 'The time it uses'
-  status: 
+  status:
     description: 'Status of result'
 runs:
   using: 'node12'

@@ -1,0 +1,24 @@
+name: 'DEPLOY_IOS'
+description: 'This is an action to deploy in ios'
+inputs:
+  product:
+    description: 'The product name to deploy'
+    required: true
+  cluster:
+    description: 'The cluster to deploy'
+    required: true
+  code_version:
+    description: 'The code version to be deployed'
+    required: true
+  distribution_percentage:
+    description: 'The percentage of instances per application slice to test. If it is 100%, which is by default, this is a full-deployment.'
+    required: false
+    default: 1.0
+outputs:
+  time:
+    description: 'The time it uses'
+  status:
+    description: 'Status of result'
+runs:
+  using: 'node12'
+  main: 'deploy_ios.js'
