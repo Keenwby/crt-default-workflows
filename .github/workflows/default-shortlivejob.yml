@@ -1,0 +1,69 @@
+# Workflow diagram:
+#   ei-ltx1   -->|                  corp                        prod
+#                |      -->   shadow ->  deploy     -->  canary  -> promotion
+#   ei4       -->|  
+name: default-shortlivejob    # This is the GHA version of short-live-job default workflow
+
+on: [push]                      # This workflow is triggered by a success postcommit
+
+env:                                                                        # We should use 'context' instead of 'env'
+  product: test-product
+  code_version: code_version                                                # Global arguements taken from either user inputs or the event who triggered this workflow
+  config_version: config_version
+ 
+jobs: 
+
+  deploy_on_lit:
+    runs-on: ubuntu-latest  
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: deploy_on_lit-lca1-1
+      uses: ./actions/deploy_shortlive_job/                            
+      with: 
+        product: $product
+        target_tuples: (lit-lca1-1, None)
+        code_version: $code_version
+        config_version: $config_version
+
+  deploy_on_ei:
+    needs: [deploy_on_lit]
+    runs-on: ubuntu-latest
+       
+    steps:
+    - name: Checkout                                                        # This is only for passing building GHA. We do not need checkout before taking actions in our w/f.
+      uses: actions/checkout@master                                          
+    - name: deploy_on_ei_ltx1
+#       env:
+#         JOB_CONTEXT: ${{ toJson(job) }}
+#         STEP_CONTEXT: ${{ toJson(steps) }}
+#         run: echo "$JOB_CONTEXT .   $STEP_CONTEXT"
+      uses: ./actions/deploy_shortlive_job/                            
+      with: 
+        product: $product
+        target_tuples: (ei-ltx1, None)
+        code_version: $code_version                                            #$ or ${code_version} or ${{code_version}}
+        config_version: $config_version                                        # GHA: ${{github.workflow.env.config_version}}
+  
+  deploy_on_corp:
+    needs: [deploy_on_ei]                                               
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: shadow_on_corp
+      uses: ./actions/deploy_shortlive_job/                            
+      with: 
+        product: $product
+        target_tuples: (corp-lca1, corp.shadow)
+        code_version: $code_version
+        config_version: $config_version
+
+    - name: deploy_on_corp
+      uses: ./actions/deploy_shortlive_job/                            
+      with: 
+        product: $product
+        target_tuples: (corp-lca1, corp.full)
+        code_version: $code_version
+        config_version: $config_version
