@@ -1,0 +1,23 @@
+name: 'CANARY TIMEOUT'
+description: 'fake canary timeout'
+inputs:
+  product:
+    description: 'The product name to deploy'
+    required: true
+  target_tuples:
+    description: 'The (fabric_name, tag) string tuples of the targets'
+    required: true
+  duration:
+    description: 'duration of the canary timeout in mins.'
+    required: true
+  reason:
+    description: 'reason for auto pause'
+    required: true
+outputs:
+  time:
+    description: 'The time it uses'
+  status:
+    description: 'Status of result'
+runs:
+  using: 'node12'
+  main: 'canary_timeout.js'

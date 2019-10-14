@@ -1,0 +1,17 @@
+name: 'Cancel canary timeout'
+description: 'fake cancel canary timeout'
+inputs:
+  product:
+    description: 'The product name to deploy'
+    required: true
+  target_tuples:
+    description: 'The (fabric_name, tag) string tuples of the targets'
+    required: true
+outputs:
+  time:
+    description: 'The time it uses'
+  status:
+    description: 'Status of result'
+runs:
+  using: 'node12'
+  main: 'cancel_canary_timeout.js'
