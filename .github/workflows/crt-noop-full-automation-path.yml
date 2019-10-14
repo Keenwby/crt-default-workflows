@@ -60,6 +60,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@master
     - name: rollback_on_lit
       uses: ./actions/deploy_lid_targets/
       with:
@@ -144,8 +146,9 @@ jobs:
     runs-on: ubuntu-latest
      
     steps:
+    - name: Checkout
+      uses: actions/checkout@master
     - name: promote_on_corp
-      if: success()
       uses: ./actions/deploy_lid_targets/
       with:
         product: $product
