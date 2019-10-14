@@ -95,7 +95,7 @@ jobs:
         distribution_percentage: 1.0
         auto_retry: $auto_retry
 
-  deploy_on_corp_with_ekg:
+  canary_on_corp_with_ekg:
     needs: deploy_on_ei_with_private_moratorium
     runs-on: ubuntu-latest
     env:
@@ -123,30 +123,40 @@ jobs:
         analysis_type: some_analysis_type
         target_tuples: $target_tuples
 
+  rollback_canary_on_corp:
+    needs: canary_on_corp_with_ekg
+    if: failure()
+    runs-on: ubuntu-latest
+    
+    steps:
     - name: rollback_canary_on_corp
-      if: failure()
       uses: ./actions/deploy_lid_targets/
       with:
         product: $product
-        target_tuples: $target_tuples
+        target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
         code_version: $rollback_code_version_on_corp
         config_version: $rollback_config_version_on_corp
         distribution_percentage: 0.2
         auto_retry: $auto_retry
 
+  promote_on_corp:
+    needs: canary_on_corp_with_ekg
+    runs-on: ubuntu-latest
+     
+    steps:
     - name: promote_on_corp
       if: success()
       uses: ./actions/deploy_lid_targets/
       with:
         product: $product
-        target_tuples: $target_tuples
+        target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
         code_version: $code_version
         config_version: $config_version
         distribution_percentage: 1.0
         auto_retry: $auto_retry
 
   canary_one_on_prod:
-    needs: deploy_on_corp_with_ekg
+    needs: promote_on_corp
     runs-on: ubuntu-latest
     env:
       target_tuples: ((prod-lva1, prod-lva1.canary), (prod-lsg1, prod-lsg1.canary))
@@ -173,7 +183,7 @@ jobs:
         target_tuples: $target_tuples
 
   canary_two_on_prod:
-    needs: deploy_on_corp_with_ekg
+    needs: promote_on_corp
     runs-on: ubuntu-latest
     env:
       target_tuples: (prod-lsg1, prod-lva1.canary)
