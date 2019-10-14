@@ -1,6 +1,6 @@
 # Workflow diagram:
-#   ei-ltx1   -->|                  corp                        prod
-#                |      -->   shadow ->  deploy     -->  canary  -> promotion
+#   ei-ltx1   -->|                prod-ltx1                        prod
+#                |      -->   canary  ->  deploy     -->         promotion
 #   ei4       -->|  
 name: default-lid-deployabale    # This is the GHA version of lid_deployable default workflow
 
@@ -22,10 +22,6 @@ jobs:
     - name: Checkout                                                        # This is only for passing building GHA. We do not need checkout before taking actions in our w/f.
       uses: actions/checkout@master                                          
     - name: deploy_on_ei_ltx1
-#       env:
-#         JOB_CONTEXT: ${{ toJson(job) }}
-#         STEP_CONTEXT: ${{ toJson(steps) }}
-#         run: echo "$JOB_CONTEXT .   $STEP_CONTEXT"
       uses: ./actions/deploy_lid_targets/                            
       with: 
         product: $product
@@ -49,36 +45,9 @@ jobs:
         config_version: $config_version
         auto_retry: $auto_retry
   
-  deploy_on_corp:
+  deploy_on_prod-ltx1:
     needs: [deploy_on_ei-ltx1, deploy_on_ei4]                                               
-    runs-on: ubuntu-latest
-    env:
-      auto_retry_success_rate: 0.8 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@master
-    - name: shadow_on_corp
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
-        product: $product
-        target_tuples: (corp-lca1, corp.shadow)
-        code_version: $code_version
-        config_version: $config_version
-        auto_retry: $auto_retry
-        auto_retry_success_rate: $auto_retry_success_rate
-    - name: deploy_on_corp
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
-        product: $product
-        target_tuples: (corp-lca1, corp.full)
-        code_version: $code_version
-        config_version: $config_version
-        auto_retry: $auto_retry
-        auto_retry_success_rate: $auto_retry_success_rate
-
-  deploy_on_prod:
-    needs: deploy_on_corp
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
     steps:
     - name: Checkout
       uses: actions/checkout@master
@@ -100,6 +69,14 @@ jobs:
         code_version: $code_version
         config_version: $config_version
         distribution_percentage: 1.0
+        auto_retry_success_rate: 0.9
+
+  deploy_on_prod:
+    needs: deploy_on_prod-ltx1
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
     - name: promotion_on_prods
       uses: ./actions/deploy_lid_targets/                            
       with: 
