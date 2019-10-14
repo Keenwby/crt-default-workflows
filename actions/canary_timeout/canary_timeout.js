@@ -2,10 +2,11 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 try {
+  const product = core.getInput('product');
+  const target_tuples = core.getInput('target_tuples');
   const duration = core.getInput('duration');
   const reason = core.getInput('reason');
-  const requires_manual_check = core.getInput('requires_manual_check');
-  console.log(`Auto Pause for duration ${duration}, reason ${reason} and requires manual check ${requires_manual_check}`);
+  console.log(`Auto Pause for duration ${duration}, reason ${reason} for product ${product} and targets ${target_tuples}`);
   const time = (new Date()).toTimeString();
   core.setOutput("time", time);
   core.setOutput("status", "SUCCEEDED");
