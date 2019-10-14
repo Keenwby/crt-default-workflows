@@ -19,8 +19,10 @@ inputs:
     required: true
     default: 'any'
 outputs:
-  time:
-    description: 'The time it uses'
+  start_time:
+    description: 'The time it starts'
+  end_time:
+    description: 'The time it ends'    
   status:
     description: 'Status of result'
 runs:
