@@ -2,7 +2,7 @@
 
 ![](https://github.com/Keenwby/crt-default-workflows/workflows/default-lid-deployabale/badge.svg) 
 
-<img src="https://github.com/Keenwby/crt-default-workflows/tree/master/workflow_images/lid-deployables.png>
+<img src="https://github.com/Keenwby/crt-default-workflows/tree/master/workflow_images/lid-deployables.png">
 
 ![](https://github.com/Keenwby/crt-default-workflows/workflows/crt-noop-full-automation-path/badge.svg) 
 
