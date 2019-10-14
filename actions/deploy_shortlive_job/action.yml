@@ -1,0 +1,24 @@
+name: 'DEPLOY_SHORTLIVE_JOB'
+description: 'This is an action to deploy short-live-job in parallel'
+inputs:
+  product:
+    description: 'The product name to deploy'
+    required: true
+  target_tuples:
+    description: 'The (fabric_name, tag) string tuples of the targets'
+    required: true
+  code_version:
+    description: 'The code version to be deployed'
+    required: true
+  config_version:
+    description: 'The config version to be deployed'
+    required: false
+    default: None
+outputs:
+  time:
+    description: 'The time it uses'
+  status:
+    description: 'Status of result'
+runs:
+  using: 'node12'
+  main: 'deploy_shortlive_job.js'
