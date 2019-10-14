@@ -1,6 +1,6 @@
 # Workflow diagram:
-#            ei                                  corp                                                           prod
-#  deploy  |ei-ltx1, tag_one |    ->->  canary |->-> ekg ->-> promotion                             -->   manual_check -> deploy -> cancel_canary_timeout
+#            ei                                  corp                                                                          prod
+#  deploy  |ei-ltx1, tag_one |    ->->  canary |->-> ekg ->-> promotion -> cancel_canary_timeout                  -->   manual_check -> deploy
 #          |ei4,     tag_two |                 |->-> timeout --> canary_rollback
 #
 name: crt-noop-with-canary-timeout-and-manual-check
