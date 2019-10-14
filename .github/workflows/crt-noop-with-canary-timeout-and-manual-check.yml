@@ -1,9 +1,9 @@
 # Workflow diagram:
 #            ei                                  corp                                                           prod
-#  deploy  |ei-ltx1, tag_one |    ->->  canary |->-> ekg ->-> promotion                             -->   manual_check -> deploy
-#          |ei4,     tag_two |                 |->-> auto_pause -->promotion_not_start--> canary        
+#  deploy  |ei-ltx1, tag_one |    ->->  canary |->-> ekg ->-> promotion                             -->   manual_check -> deploy -> cancel_canary_timeout
+#          |ei4,     tag_two |                 |->-> timeout --> canary_rollback        
 #                                                                                            
-name: crt-noop-with-auto-pause
+name: crt-noop-with-canary-timeout-and-manual-check
 
 on: [push]
 
@@ -85,22 +85,23 @@ jobs:
         distribution_percentage: 1.0
         auto_retry: $auto_retry
   
-  auto_pause_for_canary_timeout:
+  canary_timeout:
     needs: canary_on_corp
     runs-on: ubuntu-latest  
     steps:
     - name: Checkout
       uses: actions/checkout@master
     - name: auto_pause_for_canary_timeout_on_corp
-      uses: ./actions/auto_pause/                            
+      uses: ./actions/canary_timeout/                            
       with:
-        requires_manual_check: false
+        product: $product
+        target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
         duration: 360
         reason: Pause 6 hours for canary timeout
   
   rollback_canary_for_timeout:
     runs-on: ubuntu-latest
-    needs: auto_pause_for_canary_timeout
+    needs: canary_timeout
     #if: notStart(promote_on_corp)                                                 # We just know the status of a job not the status of a step in another job
     steps:
     - name: Checkout
@@ -138,4 +139,10 @@ jobs:
         config_version: $config_version
         distribution_percentage: 1.0
         auto_retry: $auto_retry
+        
+    - name: cancel_canary_timeout
+      uses: ./actions/cancel_canary_timeout/                            
+      with: 
+        product: $product
+        target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
     
