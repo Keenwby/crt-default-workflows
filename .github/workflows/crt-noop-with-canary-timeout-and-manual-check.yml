@@ -1,18 +1,18 @@
 # Workflow diagram:
 #            ei                                  corp                                                           prod
 #  deploy  |ei-ltx1, tag_one |    ->->  canary |->-> ekg ->-> promotion                             -->   manual_check -> deploy -> cancel_canary_timeout
-#          |ei4,     tag_two |                 |->-> timeout --> canary_rollback        
-#                                                                                            
+#          |ei4,     tag_two |                 |->-> timeout --> canary_rollback
+#
 name: crt-noop-with-canary-timeout-and-manual-check
 
 on: [push]
 
-env:                                                                        
-  product: test-product                                                     
-  code_version: vCode                                                       
-  config_version: vConfig                                                   
+env:
+  product: test-product
+  code_version: vCode
+  config_version: vConfig
   auto_retry: false
-  rollback_code_version_on_corp: vCodeCorp 
+  rollback_code_version_on_corp: vCodeCorp
   rollback_config_version_on_corp: vCfgCorp
 
 jobs:
@@ -23,28 +23,28 @@ jobs:
       max-parallel: 2
       matrix:
         fabrics: [ei-ltx1, ei4]
-        tags: [tag_one, tag_two]                    
+        tags: [tag_one, tag_two]
     steps:
     - name: Checkout
       uses: actions/checkout@master
     - name: canary_on_corp
-      uses: ./actions/deploy_lid_targets/                            
+      uses: ./actions/deploy_lid_targets/
       with:
         product: $product
         target_tuples: ($fabrics, $tags)
         code_version: $code_version
         config_version: $config_version
         distribution_percentage: 0.2
-        auto_retry: $auto_retry                                    
-  
+        auto_retry: $auto_retry
+
   canary_on_corp:
     needs: deploy_on_ei
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@master
     - name: canary_on_corp
-      uses: ./actions/deploy_lid_targets/                            
+      uses: ./actions/deploy_lid_targets/
       with:
         product: $product
         target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
@@ -52,11 +52,11 @@ jobs:
         config_version: $config_version
         distribution_percentage: 0.2
         auto_retry: $auto_retry
-  
+
   ekg_on_corp:
     needs: canary_on_corp
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@master
@@ -68,7 +68,7 @@ jobs:
         baseline_tag: some_baseline_tag
         analysis_type: some_analysis_type
         target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
-  
+
   promote_on_corp:
     needs: ekg_on_corp
     runs-on: ubuntu-latest
@@ -76,29 +76,35 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: promote_on_corp
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
+      uses: ./actions/deploy_lid_targets/
+      with:
         product: $product
         target_tuples: ((corp-lca1, corp-lca1.promote), (corp-lva1, corp-lva1.promote))
         code_version: $code_version
         config_version: $config_version
         distribution_percentage: 1.0
         auto_retry: $auto_retry
-  
+        
+    - name: cancel_canary_timeout
+      uses: ./actions/cancel_canary_timeout/
+      with:
+        product: $product
+        target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
+
   canary_timeout:
     needs: canary_on_corp
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@master
     - name: auto_pause_for_canary_timeout_on_corp
-      uses: ./actions/canary_timeout/                            
+      uses: ./actions/canary_timeout/
       with:
         product: $product
         target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
         duration: 360
         reason: Pause 6 hours for canary timeout
-  
+
   rollback_canary_for_timeout:
     runs-on: ubuntu-latest
     needs: canary_timeout
@@ -107,42 +113,35 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: rollback_canary_on_corp
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
+      uses: ./actions/deploy_lid_targets/
+      with:
         product: $product
         target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
         code_version: $rollback_code_version_on_corp
         config_version: $rollback_config_version_on_corp
         distribution_percentage: 0.2
         auto_retry: $auto_retry
- 
+
   deploy_on_prod:
     needs: promote_on_corp
     runs-on: ubuntu-latest
-      
+
     steps:
     - name: Checkout
       uses: actions/checkout@master
     - name: auto_pause_for_manual_check
-      uses: ./actions/auto_pause/                            
+      uses: ./actions/auto_pause/
       with:
         requires_manual_check: true
         duration: None
         reason: Pause 6 hours for canary timeout
 
     - name: deploy_on_prod
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
+      uses: ./actions/deploy_lid_targets/
+      with:
         product: $product
         target_tuples: ((prod-lva1, prod.full), (prod-lor1, prod.full))
         code_version: $code_version
         config_version: $config_version
         distribution_percentage: 1.0
         auto_retry: $auto_retry
-        
-    - name: cancel_canary_timeout
-      uses: ./actions/cancel_canary_timeout/                            
-      with: 
-        product: $product
-        target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
-    

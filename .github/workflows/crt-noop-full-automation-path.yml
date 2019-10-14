@@ -1,6 +1,6 @@
 # Workflow diagram:
 #           lit-lca1-1                                   ei                              corp                                  prod
-#  deploy -> health_check -> regression    ->Y-> auto_pause -> deploy     -->  canary  -> ekg ->Y-> promotion   |-->   canary_one -> ekg_one -> promotion_one
+#  deploy -> health_check -> regression    ->Y-> private moratorium -> deploy     -->  canary  -> ekg ->Y-> promotion   |-->   canary_one -> ekg_one -> promotion_one
 #                | N                                                                      | N                   |
 #              deploy                                                                  canary                   |-->   canary_two -> ekg_two -> promotion_two
 
@@ -9,27 +9,27 @@ name: crt-noop-full-automation-path
 on: [push]
 
 env:                                                                    # We can support namespace hierarchy e.g.
-  product: test-product                                                 # - code_version:       
+  product: test-product                                                 # - code_version:
   code_version: vCode                                                   #   - deploy_to: vCode
   config_version: vCfg                                                  #   - current_on_corp: vCodeCorp               referencing: $code_version.current_on_corp
   auto_retry: false                                                     #   - current_on_lit: vCodeLit
-  rollback_code_version_on_lit: vCodeLit                                # - config_version:               
+  rollback_code_version_on_lit: vCodeLit                                # - config_version:
   rollback_code_version_on_corp: vCodeCorp                              #   - deploy_to: vCfg
   rollback_config_version_on_lit: vCfgLit                               #   - current_on_corp: vCfgCorp
   rollback_config_version_on_corp: vCfgCorp                             #   - current_on_lit: vCfgLit
 
 jobs:
   deploy_on_lit:
-    runs-on: ubuntu-latest                             
+    runs-on: ubuntu-latest
     env:
       target_tuples: (lit-lca1-1, lit.full)
 
     steps:
     - name: Checkout
       uses: actions/checkout@master
-  
+
     - name: deploy_on_lit_with_health_check
-      uses: ./actions/deploy_lid_targets/                            
+      uses: ./actions/deploy_lid_targets/
       with:
         product: $product
         target_tuples: $target_tuples
@@ -37,15 +37,15 @@ jobs:
         config_version: $config_version
         distribution_percentage: 1.0
         auto_retry: $auto_retry
-    
+
     - name: health_check_on_lit
       uses: ./actions/health_check/
       with:
         product: $product
         condition: all
-        passing_status: SUCCEEDED 
+        passing_status: SUCCEEDED
         target_tuples: $target_tuples
-    
+
     - name: regression_on_lit
       uses: ./actions/regression/
       with:
@@ -53,16 +53,16 @@ jobs:
         condition: all
         passing_status: SUCCEEDED
         target_tuples: $target_tuples
-    
+
   rollback_on_lit:
     needs: deploy_on_lit
     if: failure()
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: rollback_on_lit
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
+      uses: ./actions/deploy_lid_targets/
+      with:
         product: $product
         target_tuples: (lit-lca1-1, lit.full)
         code_version: $rollback_code_version_on_lit
@@ -73,7 +73,7 @@ jobs:
   deploy_on_ei_with_private_moratorium:
     needs: deploy_on_lit
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@master
@@ -83,30 +83,30 @@ jobs:
         product: ${product}
         target_tuples: ((ei-ltx1, ei-ltx1.full), (ei4, ei4.full))
         duration: 15
-        reason: Testing 
+        reason: Testing
 
     - name: deploy_on_ei
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
+      uses: ./actions/deploy_lid_targets/
+      with:
         product: $product
         target_tuples: ((ei-ltx1, ei-ltx1.full), (ei4, ei4.full))
         code_version: $code_version
         config_version: $config_version
         distribution_percentage: 1.0
         auto_retry: $auto_retry
-  
+
   deploy_on_corp_with_ekg:
     needs: deploy_on_ei_with_private_moratorium
     runs-on: ubuntu-latest
     env:
       target_tuples: ((corp-lca1, corp-lca1.canary), (corp-lva1, corp-lva1.canary))
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@master
     - name: canary_on_corp
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
+      uses: ./actions/deploy_lid_targets/
+      with:
         product: $product
         target_tuples: $target_tuples
         code_version: $code_version
@@ -122,22 +122,22 @@ jobs:
         baseline_tag: some_baseline_tag
         analysis_type: some_analysis_type
         target_tuples: $target_tuples
-    
+
     - name: rollback_canary_on_corp
       if: failure()
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
+      uses: ./actions/deploy_lid_targets/
+      with:
         product: $product
         target_tuples: $target_tuples
         code_version: $rollback_code_version_on_corp
         config_version: $rollback_config_version_on_corp
         distribution_percentage: 0.2
         auto_retry: $auto_retry
-    
+
     - name: promote_on_corp
       if: success()
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
+      uses: ./actions/deploy_lid_targets/
+      with:
         product: $product
         target_tuples: $target_tuples
         code_version: $code_version
@@ -154,8 +154,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: canary_one_on_prod
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
+      uses: ./actions/deploy_lid_targets/
+      with:
         product: $product
         target_tuples: $target_tuples
         code_version: $code_version
@@ -171,19 +171,19 @@ jobs:
         baseline_tag: some_baseline_tag
         analysis_type: some_analysis_type
         target_tuples: $target_tuples
-    
+
   canary_two_on_prod:
     needs: deploy_on_corp_with_ekg
     runs-on: ubuntu-latest
     env:
       target_tuples: (prod-lsg1, prod-lva1.canary)
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@master
     - name: canary_two_on_prod
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
+      uses: ./actions/deploy_lid_targets/
+      with:
         product: $product
         target_tuples: $target_tuples
         code_version: $code_version
@@ -199,7 +199,7 @@ jobs:
         baseline_tag: some_baseline_tag
         analysis_type: some_analysis_type
         target_tuples: $target_tuples
-  
+
   promote_one_on_prod:
     needs: canary_one_on_prod
     runs-on: ubuntu-latest
@@ -207,14 +207,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: promote_one_on_prod
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
+      uses: ./actions/deploy_lid_targets/
+      with:
         product: $product
         target_tuples: ((prod-lva1, prod-lva1.canary), (prod-lsg1, prod-lsg1.canary))
         code_version: $code_version
         config_version: $config_version
         auto_retry: $auto_retry
-  
+
   promote_two_on_prod:
     needs: canary_two_on_prod
     runs-on: ubuntu-latest
@@ -222,8 +222,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: promote_two_on_prod
-      uses: ./actions/deploy_lid_targets/                            
-      with: 
+      uses: ./actions/deploy_lid_targets/
+      with:
         product: $product
         target_tuples: (prod-lsg1, prod-lva1.canary)
         code_version: $code_version
