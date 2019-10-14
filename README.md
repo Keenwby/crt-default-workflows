@@ -10,7 +10,7 @@
 
 ![](https://github.com/Keenwby/crt-default-workflows/workflows/crt-noop-with-canary-timeout-and-manual-check/badge.svg)   
 
-!(https://github.com/Keenwby/crt-default-workflows/tree/master/workflow_images/crt-noop-canary-timeout.png)
+<img src="https://github.com/Keenwby/crt-default-workflows/tree/master/workflow_images/crt-noop-canary-timeout.png">
 
 #![](https://github.com/Keenwby/crt-default-workflows/workflows/default-hadoop/badge.svg)   
 
