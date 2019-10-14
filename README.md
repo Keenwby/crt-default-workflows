@@ -3,7 +3,7 @@
 ![](https://github.com/Keenwby/crt-default-workflows/workflows/crt-noop-full-automation-path/badge.svg) 
 
 
-![](https://github.com/Keenwby/crt-default-workflows/workflows/crt-noop-with-auto-pause/badge.svg)   
+![](https://github.com/Keenwby/crt-default-workflows/workflows/crt-noop-with-canary-timeout-and-manual-check/badge.svg)   
 
 
 ![](https://github.com/Keenwby/crt-default-workflows/workflows/default-hadoop/badge.svg)   
